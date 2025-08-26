@@ -153,10 +153,6 @@ if 'sqlite' in DATABASES['default']['ENGINE']:
         'check_same_thread': False,
     }
 
-print("DATABASE_URL from env:", os.getenv("DATABASE_URL"))
-print("DATABASE CONFIG:", DATABASES['default'])
-
-
 # =============================================================================
 # PASSWORD VALIDATION
 # =============================================================================
