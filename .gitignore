@@ -23,15 +23,19 @@ staticfiles/
 # --- Node / React ---
 
 # Dependencies
-/node_modules
-/.pnp
+node_modules/
+.pnp
 .pnp.js
 
 # Testing
-/coverage
+coverage/
 
 # Production build
-/build
+build/
+dist/
+.next/
+.nuxt/
+.cache/
 
 # Logs
 npm-debug.log*
