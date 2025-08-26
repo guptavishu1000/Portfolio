@@ -8,4 +8,4 @@ python manage.py collectstatic --no-input
 python manage.py migrate
 
 # Use our new, safe command that won't fail
-python manage.py createadmin
+python manage.py createsuperuser --noinput || true
