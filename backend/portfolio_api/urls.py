@@ -1,5 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from django.views.generic.base import RedirectView
+from django.templatetags.static import static
 from . import views
 
 router = DefaultRouter()
