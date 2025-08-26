@@ -198,7 +198,7 @@ SHORT_DATETIME_FORMAT = 'm/d/Y H:i'
 # =============================================================================
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Additional static file directories
 STATICFILES_DIRS = [
