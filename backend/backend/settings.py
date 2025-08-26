@@ -102,7 +102,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -111,8 +110,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -152,6 +149,9 @@ if 'sqlite' in DATABASES['default']['ENGINE']:
         'timeout': 20,
         'check_same_thread': False,
     }
+
+print("DATABASE_URL from env:", os.getenv("DATABASE_URL"))
+print("DATABASE CONFIG:", DATABASES['default'])
 
 
 # =============================================================================
