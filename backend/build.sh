@@ -1,15 +1,11 @@
 #!/usr/bin/env bash
 # exit on error
-set -e
+set -o errexit
 
-# Install dependencies
 pip install -r requirements.txt
 
-# Run build commands
 python manage.py collectstatic --no-input
 python manage.py migrate
 
-# Create the superuser
-# This command will fail if the user already exists.
-echo "Creating superuser..."
-python manage.py createsuperuser --noinput --username admin --email guptavishu1000@gmail.com
+# Use our new, safe command that won't fail
+python manage.py createadmin
