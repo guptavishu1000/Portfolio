@@ -107,7 +107,7 @@ const Home = () => {
               <div className="flex flex-col sm:flex-row gap-3">
                 
                 <a
-                  href={`${MEDIA_BASE_URL}${personalInfo.resume}`}
+                  href={`${MEDIA_BASE_URL}/${personalInfo.resume}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
