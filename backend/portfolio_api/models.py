@@ -18,14 +18,36 @@ class PersonalInfo(models.Model):
     email = models.EmailField(help_text="Primary email address")
     phone = models.CharField(max_length=20, blank=True, help_text="Phone number (optional)")
     location = models.CharField(max_length=100, blank=True, help_text="City, Country (optional)")
+
+    # Social links
     github = models.URLField(blank=True, help_text="GitHub profile URL (optional)")
     linkedin = models.URLField(blank=True, help_text="LinkedIn profile URL (optional)")
     twitter = models.URLField(blank=True, help_text="Twitter profile URL (optional)")
     website = models.URLField(blank=True, help_text="Personal website URL (optional)")
-    profile_image = models.ImageField(upload_to=UPLOAD_PATHS['profile'], blank=True, help_text="Profile picture (optional)")
-    resume = models.FileField(upload_to=UPLOAD_PATHS['resume'], blank=True, help_text="Resume/CV file (optional)")
+
+    # Instead of ImageField/FileField:
+    profile_image = models.CharField(
+        max_length=200, 
+        default="assets/images/profile_pic.png",
+        help_text="Path in static files"
+    )
+    resume = models.CharField(
+        max_length=200,
+        default="assets/docs/resume.pdf",
+        help_text="Path in static files"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def profile_image_url(self):
+        from django.templatetags.static import static
+        return static(self.profile_image)
+
+    def resume_url(self):
+        from django.templatetags.static import static
+        return static(self.resume)
+
 
     class Meta:
         verbose_name = "Personal Information"

@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from django.templatetags.static import static
+from django.conf import settings
 from .models import PersonalInfo, Skill, Project, Experience, Education, Contact
 
 
