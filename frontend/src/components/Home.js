@@ -42,7 +42,7 @@ const Home = () => {
             className="mb-12"
           >
             {/* Profile Picture */}
-            {`${personalInfo.profile_image}` && (
+            {`${personalInfo?.profile_image_url}` && (
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -51,7 +51,7 @@ const Home = () => {
               >
                 <div className="relative inline-block">
                   <img
-                    src={`${personalInfo.profile_image}`}
+                    src={`${personalInfo?.profile_image_url || MEDIA_BASE_URL + '/static/assets/images/profile_pic.png'}`}
                     alt={personalInfo?.name || 'Profile Picture'}
                     className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-xl"
                   />
@@ -103,11 +103,11 @@ const Home = () => {
               View My Work
             </Link>
             
-            {personalInfo?.resume && (
+            {personalInfo?.resume_url && (
               <div className="flex flex-col sm:flex-row gap-3">
                 
                 <a
-                  href={`${personalInfo.resume}`}
+                  href={`${personalInfo.resume_url}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"

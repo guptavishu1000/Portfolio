@@ -25,7 +25,7 @@ class PersonalInfo(models.Model):
     twitter = models.URLField(blank=True, help_text="Twitter profile URL (optional)")
     website = models.URLField(blank=True, help_text="Personal website URL (optional)")
 
-    # Instead of ImageField/FileField:
+    # Instead of ImageField/FileField use CharField to store static paths:
     profile_image = models.CharField(
         max_length=200, 
         default="assets/images/profile_pic.png",

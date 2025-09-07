@@ -80,7 +80,7 @@ const About = () => {
   }
 
   // Ensure skills is always an array
-  const safeSkills = Array.isArray(skills) ? skills : [];
+  // const safeSkills = Array.isArray(skills) ? skills : [];
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
