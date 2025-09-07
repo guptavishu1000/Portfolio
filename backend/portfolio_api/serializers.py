@@ -11,11 +11,41 @@ class SkillSerializer(serializers.ModelSerializer):
 
 
 class PersonalInfoSerializer(serializers.ModelSerializer):
-    """Serializer for PersonalInfo model with all fields."""
-    
+    profile_image_url = serializers.SerializerMethodField()
+    resume_url = serializers.SerializerMethodField()
+
     class Meta:
         model = PersonalInfo
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'title', 'bio', 'email', 'phone', 'location',
+            'github', 'linkedin', 'twitter', 'website',
+            'profile_image', 'resume',
+            'profile_image_url', 'resume_url',
+            'created_at', 'updated_at',
+        ]
+
+    def _abs(self, request, path):
+        """Build absolute URL if request present, else return path."""
+        if request:
+            return request.build_absolute_uri(path)
+        # If no request (unlikely in DRF), return a relative path
+        return path
+
+    def get_profile_image_url(self, obj):
+        request = self.context.get('request')
+        # If an uploaded file exists, return its URL
+        if getattr(obj, 'profile_image', None) and getattr(obj.profile_image, 'url', None):
+            return self._abs(request, obj.profile_image.url)
+        # Fallback to static asset
+        static_path = settings.STATIC_URL.rstrip('/') + '/assets/images/profile_pic.png'
+        return self._abs(request, static_path)
+
+    def get_resume_url(self, obj):
+        request = self.context.get('request')
+        if getattr(obj, 'resume', None) and getattr(obj.resume, 'url', None):
+            return self._abs(request, obj.resume.url)
+        static_path = settings.STATIC_URL.rstrip('/') + '/assets/docs/Vishesh_Gupta_Resume.pdf'
+        return self._abs(request, static_path)
 
 
 class ProjectSerializer(serializers.ModelSerializer):

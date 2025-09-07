@@ -89,17 +89,11 @@ class PersonalInfoViewSet(viewsets.ReadOnlyModelViewSet):
         try:
             personal_info = PersonalInfo.objects.first()
             if personal_info:
-                serializer = self.get_serializer(personal_info)
+                serializer = PersonalInfoSerializer(personal_info, context={'request': request})
                 return Response(serializer.data)
-            return Response(
-                {'error': 'No personal information found'}, 
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({'error': 'No personal information found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response(
-                {'error': f'Error retrieving personal info: {str(e)}'}, 
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            return Response({'error': f'Error retrieving personal info: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class SkillViewSet(viewsets.ReadOnlyModelViewSet):
