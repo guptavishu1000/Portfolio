@@ -22,9 +22,9 @@ GPA_MAX = 4.00
 
 # File Upload Paths
 UPLOAD_PATHS = {
-    'profile': 'profile/',
-    'resume': 'resume/',
-    'projects': 'projects/',
+    'profile': 'media/profile/',
+    'resume': 'media/resume/',
+    'projects': 'media/projects/',
 }
 
 # API Configuration

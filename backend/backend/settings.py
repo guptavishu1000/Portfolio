@@ -76,6 +76,7 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = os.environ.get("SECURE_HSTS_PRELOAD", "False").lower() in ("1", "true")
 else:
     # local/dev defaults
+    SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
 
@@ -250,7 +251,7 @@ REST_FRAMEWORK = {
 # =============================================================================
 
 CORS_ALLOWED_ORIGINS = [
-    os.environ.get("CORS_ALLOWED_ORIGIN"),
+    # os.environ.get("CORS_ALLOWED_ORIGIN"),
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
