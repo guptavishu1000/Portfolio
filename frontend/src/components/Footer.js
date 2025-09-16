@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
-import { GithubIcon, LinkedinIcon, LeetcodeIcon, CodeforcesIcon, KaggleIcon, SocialLink } from './SocialIcons';
+import SocialLinks from './SocialLinks';
 
 const Footer = () => {
   const [personalInfo, setPersonalInfo] = useState(null);
@@ -33,47 +33,7 @@ const Footer = () => {
             <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-md">
               {personalInfo?.bio || 'Passionate developer creating innovative solutions with modern technologies.'}
             </p>
-            <div className="flex space-x-4">
-              {personalInfo?.github && (
-                <SocialLink href={personalInfo.github}>
-                  <GithubIcon />
-                </SocialLink>
-              )}
-              
-              {personalInfo?.linkedin && (
-                <SocialLink href={personalInfo.linkedin}>
-                  <LinkedinIcon />
-                </SocialLink>
-              )}
-              
-              {personalInfo?.leetcode && (
-                <div className="hidden dark:block">
-                  <SocialLink href={personalInfo.leetcode}>
-                    <LeetcodeIcon darkMode={true} />
-                  </SocialLink>
-                </div>
-              )}
-              
-              {personalInfo?.leetcode && (
-                <div className="dark:hidden">
-                  <SocialLink href={personalInfo.leetcode}>
-                    <LeetcodeIcon darkMode={false} />
-                  </SocialLink>
-                </div>
-              )}
-
-              {personalInfo?.linkedin && (
-                <SocialLink href={personalInfo.linkedin}>
-                  <CodeforcesIcon />
-                </SocialLink>
-              )} 
-
-              {personalInfo?.linkedin && (
-                <SocialLink href={personalInfo.linkedin}>
-                  <KaggleIcon />
-                </SocialLink>
-              )} 
-            </div>
+            <SocialLinks personalInfo={personalInfo} />
           </div>
 
           {/* Quick Links */}
