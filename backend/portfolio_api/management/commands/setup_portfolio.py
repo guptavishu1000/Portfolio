@@ -59,6 +59,7 @@ class Command(BaseCommand):
                 location='San Francisco, CA',
                 github='https://github.com/johndoe',
                 linkedin='https://linkedin.com/in/johndoe',
+                leetcode='https://leetcode.com/johndoe',
                 website='https://johndoe.dev'
             )
             self.stdout.write(
@@ -198,7 +199,7 @@ class Command(BaseCommand):
                     'end_date': '2020-05-01',
                     'current': False,
                     'description': 'Focused on software engineering and algorithms.',
-                    'gpa': 3.8,
+                    'cpi': 8.8,
                     'achievements': 'Dean\'s List, Computer Science Honor Society'
                 }
             ]

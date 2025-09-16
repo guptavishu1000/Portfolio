@@ -16,9 +16,9 @@ SKILL_CATEGORIES = [
 # Proficiency Levels
 PROFICIENCY_CHOICES = [(i, f"{i}/10") for i in range(1, 11)]
 
-# GPA Validation
-GPA_MIN = 0.00
-GPA_MAX = 4.00
+# CPI Validation
+CPI_MIN = 0.00
+CPI_MAX = 10.00
 
 # File Upload Paths
 UPLOAD_PATHS = {

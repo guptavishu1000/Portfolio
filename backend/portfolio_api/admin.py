@@ -18,7 +18,7 @@ class PersonalInfoAdmin(admin.ModelAdmin):
             'fields': ('name', 'title', 'bio', 'email', 'phone', 'location')
         }),
         ('Social Links', {
-            'fields': ('github', 'linkedin', 'twitter', 'website'),
+            'fields': ('github', 'linkedin', 'leetcode', 'website'),
             'classes': ('collapse',)
         }),
         ('Files', {
@@ -132,7 +132,7 @@ class ExperienceAdmin(admin.ModelAdmin):
 class EducationAdmin(admin.ModelAdmin):
     """Admin configuration for Education model."""
     
-    list_display = ('degree', 'field_of_study', 'institution', 'start_date', 'end_date', 'current', 'gpa', 'order')
+    list_display = ('degree', 'field_of_study', 'institution', 'start_date', 'end_date', 'current', 'cpi', 'order')
     list_filter = ('current', 'start_date', 'institution')
     search_fields = ('degree', 'field_of_study', 'institution', 'description')
     ordering = ('-start_date', 'order')
@@ -146,7 +146,7 @@ class EducationAdmin(admin.ModelAdmin):
             'fields': ('start_date', 'end_date', 'current')
         }),
         ('Academic Information', {
-            'fields': ('description', 'gpa', 'achievements')
+            'fields': ('description', 'cpi', 'achievements')
         }),
         ('Display Order', {
             'fields': ('order',)

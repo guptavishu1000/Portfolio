@@ -221,7 +221,7 @@ ALLOWED_DOCUMENT_TYPES = ['application/pdf', 'application/msword',
 
 
 # =============================================================================
-# REST FRAMEWORK CONFIGURATION
+# REST FRAMEWORK CONFIGURATION - PAGINATION, THROTTLING (RATE LIMITING), VERSIONING
 # =============================================================================
 
 REST_FRAMEWORK = {
@@ -237,7 +237,7 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'
     ],
-    'DEFAULT_THROTTLE_RATES': {
+    'DEFAULT_THROTTLE_RATES': {         # rate limits
         'anon': '100/hour',
         'user': '1000/hour'
     },

@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.text import slugify
 from .constants import (
-    SKILL_CATEGORIES, PROFICIENCY_CHOICES, GPA_MIN, GPA_MAX,
+    SKILL_CATEGORIES, PROFICIENCY_CHOICES, CPI_MIN, CPI_MAX,
     UPLOAD_PATHS, VALIDATION_MESSAGES
 )
 
@@ -22,7 +22,7 @@ class PersonalInfo(models.Model):
     # Social links
     github = models.URLField(blank=True, help_text="GitHub profile URL (optional)")
     linkedin = models.URLField(blank=True, help_text="LinkedIn profile URL (optional)")
-    twitter = models.URLField(blank=True, help_text="Twitter profile URL (optional)")
+    leetcode = models.URLField(blank=True, help_text="LeetCode profile URL (optional)")
     website = models.URLField(blank=True, help_text="Personal website URL (optional)")
 
     # Instead of ImageField/FileField use CharField to store static paths:
@@ -160,13 +160,13 @@ class Education(models.Model):
     end_date = models.DateField(null=True, blank=True, help_text="End date (leave blank if current)")
     current = models.BooleanField(default=False, help_text="Currently studying here")
     description = models.TextField(blank=True, help_text="Additional details about the program")
-    gpa = models.DecimalField(
+    cpi = models.DecimalField(
         max_digits=3, 
         decimal_places=2, 
         blank=True, 
         null=True,
-        validators=[MinValueValidator(GPA_MIN), MaxValueValidator(GPA_MAX)],
-        help_text="GPA (0.00-4.00 scale, optional)"
+        validators=[MinValueValidator(CPI_MIN), MaxValueValidator(CPI_MAX)],
+        help_text="CPI (0.00-10.00 scale, optional)"
     )
     achievements = models.TextField(blank=True, help_text="Academic achievements and honors")
     order = models.PositiveIntegerField(default=0, help_text="Display order")

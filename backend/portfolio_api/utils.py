@@ -117,17 +117,17 @@ def get_skill_category_display(category: str) -> str:
     return category_map.get(category, category.title())
 
 
-def validate_gpa(gpa: float) -> bool:
+def validate_cpi(cpi: float) -> bool:
     """
-    Validate GPA value.
+    Validate CPI value.
     
     Args:
-        gpa (float): GPA value to validate
+        cpi (float): CPI value to validate
         
     Returns:
-        bool: True if valid GPA, False otherwise
+        bool: True if valid CPI, False otherwise
     """
-    return 0.00 <= gpa <= 4.00
+    return 0.00 <= cpi <= 10.00
 
 
 def create_slug(text: str) -> str:

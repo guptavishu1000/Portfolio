@@ -12,6 +12,7 @@ const TimelineItem = ({ title, subtitle, period, location, description, badges =
     <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h3>
     <div className="text-gray-600 dark:text-gray-300">{subtitle}</div>
     <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">{period}{location ? ` • ${location}` : ''}</div>
+
     <p className="text-gray-700 dark:text-gray-300 mb-3">{description}</p>
     {Array.isArray(badges) && badges.length > 0 && (
       <div className="flex flex-wrap gap-2">
