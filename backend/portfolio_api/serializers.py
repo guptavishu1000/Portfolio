@@ -136,18 +136,34 @@ class ProjectSerializer(serializers.ModelSerializer):
 class ExperienceSerializer(serializers.ModelSerializer):
     """Serializer for Experience model with nested technologies."""
     technologies_used = SkillSerializer(many=True, read_only=True)
+    company_logo_url = serializers.SerializerMethodField()
     
     class Meta:
         model = Experience
-        fields = '__all__'
+        fields = ['id', 'company', 'company_logo', 'company_logo_url', 'position', 'location',
+                 'start_date', 'end_date', 'current', 'description', 'achievements', 'technologies_used']
+    
+    def get_company_logo_url(self, obj):
+        if obj.company_logo:
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.company_logo.url) if request else obj.company_logo.url
+        return None
 
 
 class EducationSerializer(serializers.ModelSerializer):
-    """Serializer for Education model with all fields."""
+    """Serializer for Education model."""
+    institution_logo_url = serializers.SerializerMethodField()
     
     class Meta:
         model = Education
-        fields = '__all__'
+        fields = ['id', 'institution', 'institution_logo', 'institution_logo_url', 'degree', 
+                 'field_of_study', 'start_date', 'end_date', 'current', 'description', 'cpi']
+    
+    def get_institution_logo_url(self, obj):
+        if obj.institution_logo:
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.institution_logo.url) if request else obj.institution_logo.url
+        return None
 
 
 class ContactSerializer(serializers.ModelSerializer):

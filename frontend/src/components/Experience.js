@@ -2,27 +2,79 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import api from '../api';
 
-const TimelineItem = ({ title, subtitle, period, location, description, badges = [] }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className="relative pl-10"
-  >
-    <div className="absolute left-0 top-2 w-3 h-3 bg-blue-600 rounded-full" />
-    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h3>
-    <div className="text-gray-600 dark:text-gray-300">{subtitle}</div>
-    <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">{period}{location ? ` • ${location}` : ''}</div>
-
-    <p className="text-gray-700 dark:text-gray-300 mb-3">{description}</p>
-    {Array.isArray(badges) && badges.length > 0 && (
-      <div className="flex flex-wrap gap-2">
-        {badges.map((b) => (
-          <span key={b} className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-sm rounded-full">{b}</span>
-        ))}
+const TimelineItem = ({ 
+  title, 
+  subtitle, 
+  period, 
+  location, 
+  description, 
+  badges = [], 
+  logo,
+  logoUrl,
+  isEducation = false
+}) => {
+  const hasLogo = logo || logoUrl;
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`relative pl-10 pb-8 border-l-2 ${isEducation ? 'border-purple-200 dark:border-purple-900' : 'border-blue-200 dark:border-blue-900'}`}
+    >
+      <div className={`absolute left-0 top-2 -ml-2 w-4 h-4 ${isEducation ? 'bg-purple-600' : 'bg-blue-600'} rounded-full`} />
+      
+      <div className="flex items-start gap-4">
+        {hasLogo && (
+          <div className="mt-1 flex-shrink-0">
+            <img 
+              src={logo || logoUrl} 
+              alt={`${title} logo`} 
+              className="w-12 h-12 object-contain rounded-md"
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
+            />
+          </div>
+        )}
+        <div className="flex-1">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h3>
+          <div className="text-gray-600 dark:text-gray-300">{subtitle}</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+            {period}{location ? ` • ${location}` : ''}
+          </div>
+          
+          {description && (
+            <p className="text-gray-700 dark:text-gray-300 mb-3">
+              {description.split('\n').map((line, i) => (
+                <React.Fragment key={i}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
+            </p>
+          )}
+          
+          {Array.isArray(badges) && badges.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-3">
+              {badges.map((b) => (
+                <span 
+                  key={b} 
+                  className={`px-3 py-1 text-sm rounded-full ${
+                    isEducation 
+                      ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200' 
+                      : 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200'
+                  }`}
+                >
+                  {b}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    )}
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 const Experience = () => {
   const [experience, setExperience] = useState([]);
@@ -115,10 +167,12 @@ const Experience = () => {
                 key={exp.id}
                 title={exp.position}
                 subtitle={exp.company}
-                period={`${formatDate(exp.start_date)} — ${formatDate(exp.current) ? 'Present' : (formatDate(exp.end_date) || '')}`}
+                period={`${formatDate(exp.start_date)} — ${exp.current ? 'Present' : (exp.end_date ? formatDate(exp.end_date) : '')}`}
                 location={exp.location}
                 description={exp.description}
                 badges={Array.isArray(exp.technologies_used) ? exp.technologies_used.map(t => t.name) : []}
+                logo={exp.company_logo}
+                logoUrl={exp.company_logo_url}
               />
             ))}
           </div>
@@ -135,10 +189,13 @@ const Experience = () => {
               <TimelineItem
                 key={edu.id}
                 title={edu.degree}
-                subtitle={`${edu.institution}`}
-                period={`${formatDate(edu.start_date)} — ${formatDate(edu.current) ? 'Present' : (formatDate(edu.end_date) || '')}`}
+                subtitle={edu.institution}
+                period={`${formatDate(edu.start_date)} — ${edu.current ? 'Present' : (edu.end_date ? formatDate(edu.end_date) : '')}`}
                 description={edu.description || ''}
                 badges={[]}
+                logo={edu.institution_logo}
+                logoUrl={edu.institution_logo_url}
+                isEducation={true}
               />
             ))}
           </div>

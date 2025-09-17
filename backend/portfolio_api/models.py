@@ -182,6 +182,12 @@ class Experience(models.Model):
     """Model to store work experience with achievements and technologies."""
     
     company = models.CharField(max_length=200, help_text="Company name")
+    company_logo = models.ImageField(
+        upload_to='company_logos/',
+        null=True,
+        blank=True,
+        help_text="Company logo (recommended size: 100x100px, transparent background)"
+    )
     position = models.CharField(max_length=200, help_text="Job title/position")
     location = models.CharField(max_length=100, blank=True, help_text="Work location (optional)")
     start_date = models.DateField(help_text="Start date")
@@ -220,6 +226,12 @@ class Education(models.Model):
     """Model to store educational background and achievements."""
     
     institution = models.CharField(max_length=200, help_text="Educational institution name")
+    institution_logo = models.ImageField(
+        upload_to='institution_logos/',
+        null=True,
+        blank=True,
+        help_text="Institution logo (recommended size: 100x100px, transparent background)"
+    )
     degree = models.CharField(max_length=200, help_text="Degree obtained")
     field_of_study = models.CharField(max_length=200, help_text="Field of study/major")
     start_date = models.DateField(help_text="Start date")

@@ -159,53 +159,71 @@ class ProjectAdmin(admin.ModelAdmin):
 class ExperienceAdmin(admin.ModelAdmin):
     """Admin configuration for Experience model."""
     
-    list_display = ('position', 'company', 'location', 'start_date', 'end_date', 'current', 'order')
+    list_display = ('position', 'company', 'location', 'start_date', 'end_date', 'current', 'order', 'company_logo_preview')
     list_filter = ('current', 'start_date', 'company')
     search_fields = ('position', 'company', 'description', 'achievements')
     filter_horizontal = ('technologies_used',)
     ordering = ('-start_date', 'order')
     list_editable = ('order', 'current')
-    
+    readonly_fields = ('company_logo_preview',)
     fieldsets = (
-        ('Position Details', {
-            'fields': ('position', 'company', 'location')
-        }),
-        ('Timeline', {
-            'fields': ('start_date', 'end_date', 'current')
-        }),
-        ('Content', {
-            'fields': ('description', 'achievements')
-        }),
-        ('Technologies & Order', {
-            'fields': ('technologies_used', 'order')
-        })
-    )
+            ('Position Details', {
+                'fields': ('position', 'company', 'location')
+            }),
+            ('Company Logo', {
+                'fields': ('company_logo', 'company_logo_preview')
+            }),
+            ('Timeline', {
+                'fields': ('start_date', 'end_date', 'current')
+            }),
+            ('Content', {
+                'fields': ('description', 'achievements')
+            }),
+            ('Technologies & Order', {
+                'fields': ('technologies_used', 'order')
+            })
+        )
+    
+    def company_logo_preview(self, obj):
+        if obj.company_logo:
+            return mark_safe(f'<img src="{obj.company_logo.url}" width="50" height="50" style="object-fit: contain;" />')
+        return "No logo"
+    company_logo_preview.short_description = 'Logo Preview'
 
 
 @admin.register(Education)
 class EducationAdmin(admin.ModelAdmin):
     """Admin configuration for Education model."""
     
-    list_display = ('degree', 'field_of_study', 'institution', 'start_date', 'end_date', 'current', 'cpi', 'order')
+    list_display = ('degree', 'field_of_study', 'institution', 'start_date', 'end_date', 'current', 'cpi', 'order', 'institution_logo_preview')
     list_filter = ('current', 'start_date', 'institution')
     search_fields = ('degree', 'field_of_study', 'institution', 'description')
     ordering = ('-start_date', 'order')
     list_editable = ('order', 'current')
-    
+    readonly_fields = ('institution_logo_preview',)
     fieldsets = (
-        ('Institution Details', {
-            'fields': ('institution', 'degree', 'field_of_study')
-        }),
-        ('Timeline', {
-            'fields': ('start_date', 'end_date', 'current')
-        }),
-        ('Academic Information', {
-            'fields': ('description', 'cpi', 'achievements')
-        }),
-        ('Display Order', {
-            'fields': ('order',)
-        })
-    )
+            ('Institution Details', {
+                'fields': ('institution', 'degree', 'field_of_study')
+            }),
+            ('Institution Logo', {
+                'fields': ('institution_logo', 'institution_logo_preview')
+            }),
+            ('Timeline', {
+                'fields': ('start_date', 'end_date', 'current')
+            }),
+            ('Academic Information', {
+                'fields': ('description', 'cpi', 'achievements')
+            }),
+            ('Display Order', {
+                'fields': ('order',)
+            })
+        )
+    
+    def institution_logo_preview(self, obj):
+        if obj.institution_logo:
+            return mark_safe(f'<img src="{obj.institution_logo.url}" width="50" height="50" style="object-fit: contain;" />')
+        return "No logo"
+    institution_logo_preview.short_description = 'Logo Preview'
 
 
 @admin.register(Contact)
