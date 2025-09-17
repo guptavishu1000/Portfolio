@@ -7,6 +7,75 @@ from .constants import (
 )
 
 
+class SocialLink(models.Model):
+    """Model to store various social media and profile links."""
+    personal_info = models.ForeignKey(
+        'PersonalInfo',
+        on_delete=models.CASCADE,
+        related_name='social_links',
+        help_text="Related personal information"
+    )
+    PLATFORM_CHOICES = [
+        ('github', 'GitHub'),
+        ('linkedin', 'LinkedIn'),
+        ('leetcode', 'LeetCode'),
+        ('codeforces', 'Codeforces'),
+        ('kaggle', 'Kaggle'),
+        ('website', 'Personal Website'),
+        ('twitter', 'Twitter'),
+        ('facebook', 'Facebook'),
+        ('instagram', 'Instagram'),
+        ('youtube', 'YouTube'),
+    ]
+    
+    platform = models.CharField(
+        max_length=20,
+        choices=PLATFORM_CHOICES,
+        help_text="Social media platform or website name"
+    )
+    url = models.URLField(help_text="Profile or page URL")
+    display_text = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Optional custom display text (defaults to platform name)"
+    )
+    icon_class = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text="Optional icon class (e.g., 'fab fa-github' for Font Awesome)"
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        help_text="Display order (lower numbers appear first)"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Whether to display this link"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['order', 'platform']
+        verbose_name = "Social Link"
+        verbose_name_plural = "Social Links"
+
+    def __str__(self):
+        return f"{self.get_platform_display()}: {self.display_text or self.url}"
+
+    def save(self, *args, **kwargs):
+        # Automatically set display_text to platform name if not provided
+        if not self.display_text and self.platform:
+            # Get the display name from PLATFORM_CHOICES
+            display_name = dict(self.PLATFORM_CHOICES).get(self.platform, self.platform)
+            self.display_text = display_name
+        super().save(*args, **kwargs)
+        
+    def get_platform_display(self):
+        """Get the display name for the platform."""
+        return dict(self.PLATFORM_CHOICES).get(self.platform, self.platform)
+
+
 class PersonalInfo(models.Model):
     """
     Model to store personal information for the portfolio owner.
@@ -19,11 +88,8 @@ class PersonalInfo(models.Model):
     phone = models.CharField(max_length=20, blank=True, help_text="Phone number (optional)")
     location = models.CharField(max_length=100, blank=True, help_text="City, Country (optional)")
 
-    # Social links
-    github = models.URLField(blank=True, help_text="GitHub profile URL (optional)")
-    linkedin = models.URLField(blank=True, help_text="LinkedIn profile URL (optional)")
-    leetcode = models.URLField(blank=True, help_text="LeetCode profile URL (optional)")
-    website = models.URLField(blank=True, help_text="Personal website URL (optional)")
+    # Social links are now handled by the SocialLink model
+    # (Using ForeignKey in SocialLink model instead)
 
     # Instead of ImageField/FileField use CharField to store static paths:
     profile_image = models.CharField(

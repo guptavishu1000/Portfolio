@@ -2,7 +2,47 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from .models import PersonalInfo, Skill, Project, Experience, Education, Contact
+from .models import PersonalInfo, Skill, Project, Experience, Education, Contact, SocialLink
+
+
+@admin.register(SocialLink)
+class SocialLinkAdmin(admin.ModelAdmin):
+    """Admin configuration for SocialLink model."""
+    
+    list_display = ('platform', 'display_text', 'url', 'is_active', 'order', 'personal_info')
+    list_filter = ('platform', 'is_active')
+    search_fields = ('display_text', 'url')
+    list_editable = ('is_active', 'order')
+    ordering = ('order', 'platform')
+    fieldsets = (
+        (None, {
+            'fields': ('personal_info', 'platform', 'url', 'display_text', 'icon_class')
+        }),
+        ('Display Options', {
+            'fields': ('is_active', 'order'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('personal_info')
+
+
+class SocialLinkInline(admin.StackedInline):
+    """Inline admin for SocialLink model."""
+    model = SocialLink
+    extra = 1
+    fields = ('platform', 'url', 'display_text', 'icon_class', 'is_active', 'order')
+    ordering = ('order', 'platform')
+    
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+        # Set the personal_info for new forms
+        if obj:
+            for form in formset.forms:
+                form.instance.personal_info = obj
+        return formset
 
 
 @admin.register(PersonalInfo)
@@ -17,10 +57,6 @@ class PersonalInfoAdmin(admin.ModelAdmin):
         ('Basic Information', {
             'fields': ('name', 'title', 'bio', 'email', 'phone', 'location')
         }),
-        ('Social Links', {
-            'fields': ('github', 'linkedin', 'leetcode', 'website'),
-            'classes': ('collapse',)
-        }),
         ('Files', {
             'fields': ('profile_image', 'resume'),
             'classes': ('collapse',)
@@ -30,10 +66,28 @@ class PersonalInfoAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         })
     )
+    inlines = [SocialLinkInline]
+    
+    def get_inline_instances(self, request, obj=None):
+        # Only show inlines when editing an existing object
+        if not obj:
+            return []
+        return super().get_inline_instances(request, obj)
     
     def has_add_permission(self, request):
         """Only allow one PersonalInfo instance."""
         return not PersonalInfo.objects.exists()
+    
+    def save_formset(self, request, form, formset, change):
+        """
+        Set the personal_info for new social links.
+        """
+        instances = formset.save(commit=False)
+        for instance in instances:
+            if not instance.personal_info_id:
+                instance.personal_info = form.instance
+                instance.save()
+        formset.save_m2m()
 
 
 @admin.register(Skill)

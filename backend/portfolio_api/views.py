@@ -7,7 +7,8 @@ from django.shortcuts import render
 from .models import PersonalInfo, Skill, Project, Experience, Education, Contact
 from .serializers import (
     PersonalInfoSerializer, SkillSerializer, ProjectSerializer,
-    ExperienceSerializer, EducationSerializer, ContactSerializer
+    ExperienceSerializer, EducationSerializer, ContactSerializer,
+    SocialLinkSerializer
 )
 from .constants import (
     API_VERSION, CONTACT_SUCCESS_MESSAGE, CONTACT_ERROR_MESSAGE
@@ -71,15 +72,102 @@ def custom_500(request):
     return render(request, '500.html', status=500)
 
 
-class PersonalInfoViewSet(viewsets.ReadOnlyModelViewSet):
+class PersonalInfoViewSet(viewsets.ModelViewSet):
     """
     ViewSet for PersonalInfo model.
-    Provides read-only access to personal information.
+    Provides CRUD operations for personal information.
     """
     queryset = PersonalInfo.objects.all()
     serializer_class = PersonalInfoSerializer
     permission_classes = [permissions.AllowAny]
     
+    def get_serializer_context(self):
+        """Add personal_info to the serializer context."""
+        context = super().get_serializer_context()
+        if self.action in ['create', 'update', 'partial_update']:
+            # For update/partial_update, get the existing instance
+            # For create, this will be handled in the create method
+            if self.action != 'create':
+                context['personal_info'] = self.get_object()
+        return context
+    
+    def create(self, request, *args, **kwargs):
+        # Create the personal info first
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        
+        # Get the created instance and update context for social links
+        instance = serializer.instance
+        context = self.get_serializer_context()
+        context['personal_info'] = instance
+        
+        # Handle social links if provided
+        social_links_data = request.data.get('social_links', [])
+        if social_links_data:
+            social_links_serializer = SocialLinkSerializer(
+                data=social_links_data,
+                many=True,
+                context=context
+            )
+            social_links_serializer.is_valid(raise_exception=True)
+            social_links_serializer.save()
+        
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        
+        # Update the context with the instance
+        context = self.get_serializer_context()
+        context['personal_info'] = instance
+        
+        # Update the personal info
+        serializer = self.get_serializer(instance, data=request.data, partial=partial, context=context)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        
+        # Handle social links if provided
+        if 'social_links' in request.data:
+            social_links_data = request.data['social_links']
+            
+            # Get existing social links to update or delete
+            existing_links = {str(link.id): link for link in instance.social_links.all()}
+            updated_link_ids = set()
+            
+            # Update or create social links
+            for link_data in social_links_data:
+                link_id = link_data.get('id')
+                if link_id and link_id in existing_links:
+                    # Update existing link
+                    link = existing_links[link_id]
+                    link_serializer = SocialLinkSerializer(
+                        link,
+                        data=link_data,
+                        partial=partial,
+                        context=context
+                    )
+                    link_serializer.is_valid(raise_exception=True)
+                    link_serializer.save()
+                    updated_link_ids.add(link_id)
+                else:
+                    # Create new link
+                    link_data['personal_info'] = instance.id
+                    link_serializer = SocialLinkSerializer(
+                        data=link_data,
+                        context=context
+                    )
+                    link_serializer.is_valid(raise_exception=True)
+                    link_serializer.save()
+            
+            # Delete links that weren't included in the update
+            for link_id, link in existing_links.items():
+                if link_id not in updated_link_ids:
+                    link.delete()
+        
+        return Response(serializer.data)
+        
     @action(detail=False, methods=['get'])
     def current(self, request):
         """
@@ -89,11 +177,17 @@ class PersonalInfoViewSet(viewsets.ReadOnlyModelViewSet):
         try:
             personal_info = PersonalInfo.objects.first()
             if personal_info:
-                serializer = PersonalInfoSerializer(personal_info, context={'request': request})
+                serializer = self.get_serializer(personal_info)
                 return Response(serializer.data)
-            return Response({'error': 'No personal information found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {'error': 'No personal information found'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
         except Exception as e:
-            return Response({'error': f'Error retrieving personal info: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {'error': f'Error retrieving personal info: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class SkillViewSet(viewsets.ReadOnlyModelViewSet):

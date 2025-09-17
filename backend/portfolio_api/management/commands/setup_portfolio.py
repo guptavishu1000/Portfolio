@@ -10,7 +10,7 @@ including personal info, skills, projects, experience, and education.
 import os
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from portfolio_api.models import PersonalInfo, Skill, Project, Experience, Education
+from portfolio_api.models import PersonalInfo, Skill, Project, Experience, Education, SocialLink
 from portfolio_api.constants import SKILL_CATEGORIES
 
 
@@ -56,12 +56,28 @@ class Command(BaseCommand):
                 bio='Passionate developer with expertise in modern web technologies.',
                 email='john.doe@example.com',
                 phone='+1-555-0123',
-                location='San Francisco, CA',
-                github='https://github.com/johndoe',
-                linkedin='https://linkedin.com/in/johndoe',
-                leetcode='https://leetcode.com/johndoe',
-                website='https://johndoe.dev'
+                location='San Francisco, CA'
             )
+            
+            # Create social links
+            social_links = [
+                ('github', 'GitHub', 'https://github.com/johndoe', 1),
+                ('linkedin', 'LinkedIn', 'https://linkedin.com/in/johndoe', 2),
+                ('leetcode', 'LeetCode', 'https://leetcode.com/johndoe', 3),
+                ('codeforces', 'Codeforces', 'https://codeforces.com/profile/johndoe', 4),
+                ('kaggle', 'Kaggle', 'https://kaggle.com/johndoe', 5),
+                ('website', 'My Website', 'https://johndoe.dev', 6)
+            ]
+            
+            for platform, display_text, url, order in social_links:
+                SocialLink.objects.create(
+                    personal_info=personal_info,
+                    platform=platform,
+                    display_text=display_text,
+                    url=url,
+                    order=order,
+                    is_active=True
+                )
             self.stdout.write(
                 self.style.SUCCESS(f'Personal info created for {personal_info.name}')
             )

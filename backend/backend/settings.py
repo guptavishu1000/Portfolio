@@ -238,8 +238,8 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle'
     ],
     'DEFAULT_THROTTLE_RATES': {         # rate limits
-        'anon': '100/hour',
-        'user': '1000/hour'
+        'anon': '10000/hour',
+        'user': '100000/hour'
     },
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     'DEFAULT_VERSION': 'v1',
