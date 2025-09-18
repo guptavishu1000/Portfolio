@@ -24,5 +24,11 @@ python manage.py showmigrations
 echo "Listing Django users..."
 python manage.py shell -c "from django.contrib.auth.models import User; print(list(User.objects.values('username','is_staff','is_superuser')))"
 
-# Use our new, safe command that won't fail
-python manage.py createsuperuser --noinput || true
+echo "Ensuring superuser exists..."
+python manage.py shell -c "from django.contrib.auth import get_user_model; User=get_user_model(); \
+import os; username=os.getenv('DJANGO_SUPERUSER_USERNAME','admin'); \
+password=os.getenv('DJANGO_SUPERUSER_PASSWORD','adminpass'); \
+email=os.getenv('DJANGO_SUPERUSER_EMAIL','admin@example.com'); \
+\
+(User.objects.filter(username=username).exists() or \
+ User.objects.create_superuser(username=username,password=password,email=email))"
