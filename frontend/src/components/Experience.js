@@ -27,7 +27,7 @@ const TimelineItem = ({
         {hasLogo && (
           <div className="mt-1 flex-shrink-0">
             <img 
-              src={logo || logoUrl} 
+              src={logoUrl} 
               alt={`${title} logo`} 
               className="w-12 h-12 object-contain rounded-md"
               onError={(e) => {
