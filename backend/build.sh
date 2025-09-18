@@ -2,33 +2,40 @@
 # exit on error
 set -o errexit
 
+echo "📦 Installing dependencies..."
 pip install -r requirements.txt
+
+echo "📂 Collecting static files..."
 python manage.py collectstatic --no-input
 
+echo "🔎 Checking migrations status..."
+python manage.py showmigrations portfolio_api || true
 
-# Show existing migrations
-echo "Checking applied migrations..."
-python manage.py showmigrations portfolio_api
+echo "🛠️ Applying migrations..."
+# First try normally
+if ! python manage.py migrate --no-input; then
+  echo "⚠️ Migration failed, trying with --run-syncdb..."
+  python manage.py migrate --run-syncdb --no-input
+fi
 
-echo "SQL for 0001_initial (just for reference):"
-python manage.py sqlmigrate portfolio_api 0001_initial
-
-# Apply migrations with more verbosity
-echo "Applying migrations..."
-python manage.py migrate --no-input
-
-# Show migrations after applying
-echo "Migrations after applying:"
+echo "✅ Migrations applied. Current state:"
 python manage.py showmigrations
 
-echo "Listing Django users..."
-python manage.py shell -c "from django.contrib.auth.models import User; print(list(User.objects.values('username','is_staff','is_superuser')))"
+echo "👤 Ensuring superuser exists..."
+python manage.py shell -c "
+from django.contrib.auth import get_user_model;
+import os;
+User = get_user_model();
+username = os.getenv('DJANGO_SUPERUSER_USERNAME','admin');
+password = os.getenv('DJANGO_SUPERUSER_PASSWORD','adminpass');
+email = os.getenv('DJANGO_SUPERUSER_EMAIL','admin@example.com');
+if not User.objects.filter(username=username).exists():
+    User.objects.create_superuser(username=username,password=password,email=email)
+"
 
-echo "Ensuring superuser exists..."
-python manage.py shell -c "from django.contrib.auth import get_user_model; User=get_user_model(); \
-import os; username=os.getenv('DJANGO_SUPERUSER_USERNAME','admin'); \
-password=os.getenv('DJANGO_SUPERUSER_PASSWORD','adminpass'); \
-email=os.getenv('DJANGO_SUPERUSER_EMAIL','admin@example.com'); \
-\
-(User.objects.filter(username=username).exists() or \
- User.objects.create_superuser(username=username,password=password,email=email))"
+echo "👥 Listing users:"
+python manage.py shell -c "
+from django.contrib.auth import get_user_model;
+User = get_user_model();
+print(list(User.objects.values('username','is_staff','is_superuser')))
+"
