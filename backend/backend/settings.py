@@ -407,6 +407,3 @@ CLOUDINARY_STORAGE = {
 
 # This tells Django to use Cloudinary for all media file uploads
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-# Keep using WhiteNoise for your STATIC files
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
