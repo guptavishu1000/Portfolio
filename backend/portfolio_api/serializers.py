@@ -54,6 +54,19 @@ class PersonalInfoSerializer(serializers.ModelSerializer):
     instagram_url = serializers.SerializerMethodField(required=False)
     youtube_url = serializers.SerializerMethodField(required=False)
 
+    def __init__(self, *args, **kwargs):
+        """
+        Build a cache of social links to avoid N+1 queries.
+        """
+        super().__init__(*args, **kwargs)
+        self._links_cache = {}
+        # 'self.instance' will be the PersonalInfo object
+        if self.instance:
+            # '.all()' here uses the prefetched data, NOT a new query
+            for link in self.instance.social_links.all():
+                if link.is_active:
+                    self._links_cache[link.platform] = link.url
+
     class Meta:
         model = PersonalInfo
         fields = [

@@ -77,7 +77,8 @@ class PersonalInfoViewSet(viewsets.ModelViewSet):
     ViewSet for PersonalInfo model.
     Provides CRUD operations for personal information.
     """
-    queryset = PersonalInfo.objects.all()
+    # Use prefetch_related to solve the N+1 query problem
+    queryset = PersonalInfo.objects.prefetch_related('social_links')
     serializer_class = PersonalInfoSerializer
     permission_classes = [permissions.AllowAny]
     
@@ -174,21 +175,19 @@ class PersonalInfoViewSet(viewsets.ModelViewSet):
         Get the most recent personal info.
         Returns the first (and should be only) PersonalInfo instance.
         """
-        try:
-            personal_info = PersonalInfo.objects.first()
-            if personal_info:
-                serializer = self.get_serializer(personal_info)
-                return Response(serializer.data)
-            return Response(
-                {'error': 'No personal information found'}, 
-                status=status.HTTP_404_NOT_FOUND
-            )
-        except Exception as e:
-            return Response(
-                {'error': f'Error retrieving personal info: {str(e)}'}, 
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
+        personal_info = self.get_queryset().first() 
+        
+        if personal_info:
+            # self.get_serializer() automatically passes the request
+            # context, so your SerializerMethodFields will work.
+            serializer = self.get_serializer(personal_info)
+            return Response(serializer.data)
+        
+        # This is correct: if no info, return 404.
+        return Response(
+            {'error': 'No personal information found'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
 
 class SkillViewSet(viewsets.ReadOnlyModelViewSet):
     """
