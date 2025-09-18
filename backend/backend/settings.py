@@ -86,6 +86,7 @@ else:
 
 INSTALLED_APPS = [
     # Django built-in apps
+    'cloudinary_storage',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -99,6 +100,7 @@ INSTALLED_APPS = [
     
     # Local apps
     'portfolio_api',
+    'cloudinary'
 ]
 
 MIDDLEWARE = [
@@ -392,3 +394,19 @@ PORTFOLIO_API = {
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# =============================================================================
+# CLOUDINARY STORAGE SETTINGS
+# =============================================================================
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
+
+# This tells Django to use Cloudinary for all media file uploads
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Keep using WhiteNoise for your STATIC files
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
