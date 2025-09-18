@@ -36,13 +36,6 @@ class SocialLinkInline(admin.StackedInline):
     fields = ('platform', 'url', 'display_text', 'icon_class', 'is_active', 'order')
     ordering = ('order', 'platform')
     
-    def get_formset(self, request, obj=None, **kwargs):
-        formset = super().get_formset(request, obj, **kwargs)
-        # Set the personal_info for new forms
-        if obj:
-            for form in formset.forms:
-                form.instance.personal_info = obj
-        return formset
 
 
 @admin.register(PersonalInfo)
