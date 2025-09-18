@@ -97,8 +97,6 @@ const Experience = () => {
         const expData = Array.isArray(expRes.data.results) ? expRes.data.results : [];
         const eduData = Array.isArray(eduRes.data.results) ? eduRes.data.results : [];
         
-        console.log(eduRes.data.results);
-
         setExperience(expData);
         setEducation(eduData);
       } catch (error) {

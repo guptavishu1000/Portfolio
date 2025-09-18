@@ -140,40 +140,47 @@ const Contact = () => {
               </div>
 
               {/* Social Links */}
-              {(personalInfo?.github || personalInfo?.linkedin || personalInfo?.leetcode || personalInfo?.codeforces || personalInfo?.kaggle) && (
+              {(personalInfo?.social_links?.length > 0) && (
                 <div className="pt-4">
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Follow Me</h3>
                   <div className="flex space-x-4">
-                    {personalInfo?.github && (
-                      <SocialLink href={personalInfo.github}>
-                        <GithubIcon />
-                      </SocialLink>
-                    )}
-                    
-                    {personalInfo?.linkedin && (
-                      <SocialLink href={personalInfo.linkedin}>
-                        <LinkedinIcon />
-                      </SocialLink>
-                    )}
-                    
-                    {personalInfo?.leetcode && (
-                      <SocialLink href={personalInfo.leetcode}>
-                        <LeetcodeIcon className="dark:hidden" />
-                        <LeetcodeIcon darkMode className="hidden dark:block" />
-                      </SocialLink>
-                    )}
-                    
-                    {personalInfo?.linkedin && (
-                      <SocialLink href={personalInfo.linkedin}>
-                        <CodeforcesIcon />
-                      </SocialLink>
-                    )}
-                    
-                    {personalInfo?.linkedin && (
-                      <SocialLink href={personalInfo.linkedin}>
-                        <KaggleIcon />
-                      </SocialLink>
-                    )}
+                    {personalInfo.social_links.map((link) => {
+                      switch(link.platform) {
+                        case 'github':
+                          return (
+                            <SocialLink key={link.id} href={link.url}>
+                              <GithubIcon />
+                            </SocialLink>
+                          );
+                        case 'linkedin':
+                          return (
+                            <SocialLink key={link.id} href={link.url}>
+                              <LinkedinIcon />
+                            </SocialLink>
+                          );
+                        case 'leetcode':
+                          return (
+                            <SocialLink key={link.id} href={link.url}>
+                              <LeetcodeIcon className="dark:hidden" />
+                              <LeetcodeIcon darkMode className="hidden dark:block" />
+                            </SocialLink>
+                          );
+                        case 'codeforces':
+                          return (
+                            <SocialLink key={link.id} href={link.url}>
+                              <CodeforcesIcon />
+                            </SocialLink>
+                          );
+                        case 'kaggle':
+                          return (
+                            <SocialLink key={link.id} href={link.url}>
+                              <KaggleIcon />
+                            </SocialLink>
+                          );
+                        default:
+                          return null;
+                      }
+                    })}
                   </div>
                 </div>
               )}
