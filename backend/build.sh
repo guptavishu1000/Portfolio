@@ -13,7 +13,7 @@ python manage.py showmigrations
 
 # Apply migrations with more verbosity
 echo "Applying migrations..."
-python manage.py migrate --no-input
+python manage.py migrate --no-input --fake-initial
 
 # Show migrations after applying
 echo "Migrations after applying:"
