@@ -308,7 +308,9 @@ else:
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
                 "CONNECTION_POOL_KWARGS": {
-                    "ssl_cert_reqs": None, # Required for Render Redis
+                    "connection_kwargs": {
+                        "ssl_cert_reqs": None, # Required for Render Redis
+                    }
                 },
             },
             "TIMEOUT": 60 * 15, # 15 minutes

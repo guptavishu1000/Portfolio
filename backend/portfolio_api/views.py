@@ -74,13 +74,32 @@ def custom_500(request):
 
 class PersonalInfoViewSet(viewsets.ModelViewSet):
     """
-    ViewSet for PersonalInfo model.
-    Provides CRUD operations for personal information.
+    Singleton ViewSet for PersonalInfo model.
+    Only one instance of PersonalInfo should exist at a time.
     """
-    # Use prefetch_related to solve the N+1 query problem
-    queryset = PersonalInfo.objects.prefetch_related('social_links')
     serializer_class = PersonalInfoSerializer
     permission_classes = [permissions.AllowAny]
+    
+    def get_queryset(self):
+        """Return a queryset with prefetched social_links."""
+        return PersonalInfo.objects.prefetch_related('social_links').all()
+    
+    def get_object(self):
+        """Always return the first (and only) PersonalInfo object."""
+        queryset = self.get_queryset()
+        obj = queryset.first()
+        if not obj:
+            raise Http404("No PersonalInfo found")
+        return obj
+    
+    def list(self, request, *args, **kwargs):
+        """
+        Redirect list requests to the detail view since this is a singleton.
+        This makes GET /api/personal-info/ work the same as GET /api/personal-info/1/
+        """
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
     
     def get_serializer_context(self):
         """Add personal_info to the serializer context."""
