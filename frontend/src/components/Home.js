@@ -11,7 +11,7 @@ const Home = () => {
   useEffect(() => {
     const fetchPersonalInfo = async () => {
       try {
-        const response = await api.get('/personal-info/current/');        
+        const response = await api.get('/personal-info/');        
         setPersonalInfo(response.data);
       } catch (error) {
         console.error('Error fetching personal info:', error);

@@ -15,7 +15,7 @@ const About = () => {
         setError(null);
         
         const [personalResponse, skillsResponse] = await Promise.all([
-          api.get('/personal-info/current/'),
+          api.get('/personal-info/'),
           api.get('/skills/')
         ]);
         
