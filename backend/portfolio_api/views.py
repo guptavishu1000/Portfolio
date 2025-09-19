@@ -216,7 +216,7 @@ class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
     ViewSet for Project model.
     Provides read-only access to projects with optional featured filtering.
     """
-    queryset = Project.objects.all()
+    queryset = Project.objects.prefetch_related('technologies')
     serializer_class = ProjectSerializer
     permission_classes = [permissions.AllowAny]
     
@@ -243,7 +243,7 @@ class ExperienceViewSet(viewsets.ReadOnlyModelViewSet):
     ViewSet for Experience model.
     Provides read-only access to work experience.
     """
-    queryset = Experience.objects.all()
+    queryset = Experience.objects.prefetch_related('technologies_used')
     serializer_class = ExperienceSerializer
     permission_classes = [permissions.AllowAny]
 

@@ -162,7 +162,6 @@ class ExperienceSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.company_logo.url) if request else obj.company_logo.url
         return None
 
-
 class EducationSerializer(serializers.ModelSerializer):
     """Serializer for Education model."""
     institution_logo_url = serializers.SerializerMethodField()

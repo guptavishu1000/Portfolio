@@ -287,16 +287,33 @@ CORS_ALLOW_HEADERS = [
 # CACHING CONFIGURATION
 # =============================================================================
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
-        'TIMEOUT': 300,  # 5 minutes
-        'OPTIONS': {
-            'MAX_ENTRIES': 1000,
+if DEBUG or "REDIS_URL" not in os.environ:
+    # Use LocMemCache for local development
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
+            'TIMEOUT': 300,  # 5 minutes
+            'OPTIONS': {
+                'MAX_ENTRIES': 1000,
+            }
         }
     }
-}
+else:
+    # Use Redis in production
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": os.environ.get("REDIS_URL"),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "CONNECTION_POOL_KWARGS": {
+                    "ssl_cert_reqs": None, # Required for Render Redis
+                },
+            },
+            "TIMEOUT": 60 * 15, # 15 minutes
+        }
+    }
 
 # Cache time to live is 15 minutes
 CACHE_TTL = 60 * 15
