@@ -307,11 +307,6 @@ else:
             "LOCATION": os.environ.get("REDIS_URL"),
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "CONNECTION_POOL_KWARGS": {
-                    "connection_kwargs": {
-                        "ssl_cert_reqs": None, # Required for Render Redis
-                    }
-                },
             },
             "TIMEOUT": 60 * 15, # 15 minutes
         }
