@@ -308,12 +308,12 @@ else:
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
             },
-            "TIMEOUT": 60 * 15, # 15 minutes
+            "TIMEOUT": 5 * 24 * 60 * 60, # 5 days (432000 seconds)
         }
     }
 
-# Cache time to live is 15 minutes
-CACHE_TTL = 60 * 15
+# Cache time to live is 5 days as Data is not updated frequently
+CACHE_TTL = 5 * 24 * 60 * 60 # 5 days (432000 seconds)
 
 
 # =============================================================================
