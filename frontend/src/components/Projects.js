@@ -141,33 +141,35 @@ const Projects = () => {
             {safeFilteredProjects.map((project, index) => (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 whileHover={{ y: -10 }}
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
               >
                 {/* Project Image */}
-                {project.image && (
-                  <div className="relative h-48 overflow-hidden">
+                <div className="relative h-48 overflow-hidden">
+                  {project.project_image_url ? (
                     <img
-                      src={`${MEDIA_BASE_URL}${project.image}`}
+                      src={project.project_image_url}
                       alt={project.title}
                       className="w-full h-full object-cover"
                     />
-                    {project.featured && (
-                      <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-semibold">
-                        Featured
-                      </div>
-                    )}
-                  </div>
-                )}
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                      <span className="text-gray-400 dark:text-gray-500">No image</span>
+                    </div>
+                  )}
+                  {project.featured && (
+                    <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-semibold">
+                      Featured
+                    </div>
+                  )}
+                </div>
 
                 {/* Project Content */}
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{project.title}</h3>
                   <p className="text-gray-600 dark:text-gray-300 mb-4">{project.short_description}</p>
-                  
                   {/* Technologies */}
                   <div className="flex flex-wrap gap-2 mb-4">
                     {Array.isArray(project.technologies) && project.technologies.map((tech) => (

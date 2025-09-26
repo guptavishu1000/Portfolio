@@ -138,12 +138,20 @@ class PersonalInfoSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    """Serializer for Project model with nested technologies."""
+    """Serializer for Project model with nested technologies and image URL."""
     technologies = SkillSerializer(many=True, read_only=True)
+    project_image_url = serializers.SerializerMethodField()
     
     class Meta:
         model = Project
-        fields = '__all__'
+        fields = ['id', 'title', 'short_description', 'description', 'image', 'project_image_url', 
+                 'github_url', 'live_url', 'technologies', 'featured', 'order', 'created_at', 'updated_at']
+    
+    def get_project_image_url(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.image.url) if request else obj.image.url
+        return None
 
 
 class ExperienceSerializer(serializers.ModelSerializer):
