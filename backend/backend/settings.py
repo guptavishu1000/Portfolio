@@ -17,9 +17,7 @@ from datetime import timedelta
 
 import dj_database_url
 import dotenv
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+
 # Load environment variables from .env if present
 dotenv.load_dotenv()
 
@@ -88,7 +86,6 @@ else:
 
 INSTALLED_APPS = [
     # Django built-in apps
-    'cloudinary_storage',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -102,7 +99,6 @@ INSTALLED_APPS = [
     
     # Local apps
     'portfolio_api',
-    'cloudinary'
 ]
 
 MIDDLEWARE = [
@@ -218,7 +214,7 @@ STATICFILES_DIRS = [
 
 # Media files
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # File upload settings
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
@@ -401,21 +397,3 @@ PORTFOLIO_API = {
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# =============================================================================
-# CLOUDINARY STORAGE SETTINGS
-# =============================================================================
-
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-}
-
-cloudinary.config(
-    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    api_key = os.environ.get('CLOUDINARY_API_KEY'),
-    api_secret = os.environ.get('CLOUDINARY_API_SECRET'),
-)
-
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"

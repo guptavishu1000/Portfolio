@@ -1,7 +1,7 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, FileExtensionValidator
 from django.utils.text import slugify
-from cloudinary.models import CloudinaryField
+from django.core.files.storage import FileSystemStorage
 from .constants import (
     SKILL_CATEGORIES, PROFICIENCY_CHOICES, CPI_MIN, CPI_MAX,
     UPLOAD_PATHS, VALIDATION_MESSAGES
@@ -92,28 +92,38 @@ class PersonalInfo(models.Model):
     # Social links are now handled by the SocialLink model
     # (Using ForeignKey in SocialLink model instead)
 
-    # Instead of ImageField/FileField use CharField to store static paths:
-    profile_image = models.CharField(
-        max_length=200, 
-        default="assets/images/profile_pic.png",
-        help_text="Path in static files"
+    # Profile image using local storage
+    profile_image = models.ImageField(
+        "Profile Image",
+        upload_to='profile/',
+        blank=True,
+        help_text="Upload profile image (recommended size: 500x500px)",
+        default='profile/default_profile.png',
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif', 'webp'])]
     )
-    resume = models.CharField(
-        max_length=200,
-        default="assets/docs/resume.pdf",
-        help_text="Path in static files"
+    
+    # Resume using local storage
+    resume = models.FileField(
+        "Resume/CV",
+        upload_to='resumes/',
+        blank=True,
+        null=True,
+        help_text="Upload your resume/CV (PDF format recommended)",
+        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx'])]
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def profile_image_url(self):
-        from django.templatetags.static import static
-        return static(self.profile_image)
+        if self.profile_image:
+            return self.profile_image.url
+        return None
 
     def resume_url(self):
-        from django.templatetags.static import static
-        return static(self.resume)
+        if self.resume:
+            return self.resume.url
+        return None
 
 
     class Meta:
@@ -161,7 +171,8 @@ class Project(models.Model):
     title = models.CharField(max_length=200, help_text="Project title")
     description = models.TextField(help_text="Detailed project description")
     short_description = models.CharField(max_length=300, help_text="Brief project summary")
-    image = CloudinaryField("Project screenshot (optional)", folder='projects/', blank=True, null=True)
+    image = models.ImageField("Project screenshot (optional)", upload_to='projects/', blank=True, null=True, 
+                             validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif', 'webp'])])
     github_url = models.URLField(blank=True, help_text="GitHub repository URL (optional)")
     live_url = models.URLField(blank=True, help_text="Live demo URL (optional)")
     technologies = models.ManyToManyField(Skill, related_name='projects', help_text="Technologies used")
@@ -183,7 +194,8 @@ class Experience(models.Model):
     """Model to store work experience with achievements and technologies."""
     
     company = models.CharField(max_length=200, help_text="Company name")
-    company_logo = CloudinaryField("Company logo (optional)", folder='company_logos/', blank=True, null=True)
+    company_logo = models.ImageField("Company logo (optional)", upload_to='company_logos/', blank=True, null=True,
+                                   validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif', 'webp'])])
     position = models.CharField(max_length=200, help_text="Job title/position")
     location = models.CharField(max_length=100, blank=True, help_text="Work location (optional)")
     start_date = models.DateField(help_text="Start date")
@@ -222,7 +234,8 @@ class Education(models.Model):
     """Model to store educational background and achievements."""
     
     institution = models.CharField(max_length=200, help_text="Educational institution name")
-    institution_logo = CloudinaryField("Institution logo (optional)", folder='institution_logos/', blank=True, null=True)
+    institution_logo = models.ImageField("Institution logo (optional)", upload_to='institution_logos/', blank=True, null=True,
+                                       validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif', 'webp'])])
     degree = models.CharField(max_length=200, help_text="Degree obtained")
     field_of_study = models.CharField(max_length=200, help_text="Field of study/major")
     start_date = models.DateField(help_text="Start date")
