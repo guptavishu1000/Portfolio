@@ -147,18 +147,24 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,   # persistent connections (good for prod)
-        ssl_require=not DEBUG,  # force SSL in production
+        conn_max_age=600,
+        ssl_require=not DEBUG,
     )
 }
 
-# Database optimization for SQLite
+# Add this block for MySQL specific options
+if 'mysql' in DATABASES['default']['ENGINE']:
+    DATABASES['default']['OPTIONS'] = {
+        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        'charset': 'utf8mb4',
+    }
+
+# This block for SQLite can remain as is
 if 'sqlite' in DATABASES['default']['ENGINE']:
     DATABASES['default']['OPTIONS'] = {
         'timeout': 20,
         'check_same_thread': False,
     }
-
 # =============================================================================
 # PASSWORD VALIDATION
 # =============================================================================
